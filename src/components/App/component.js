@@ -1,17 +1,11 @@
 import React from 'react';
-import {
-  NotificationContainer,
-  NotificationManager,
-} from 'react-notifications';
+import { NotificationContainer } from 'react-notifications';
+
 import 'react-notifications/lib/notifications.css';
+
 import OnlineStatusMock from './OnlineStatusMock';
 import './App.css';
-
-/* 
-Feel free to edit this all. If you don't need the HoC, go remove it. 
-If you wish to save the state somewhere else, go for it. 
-Just keep rendering <OnlineStatusMock /> 
-*/
+import useDebouncedNotifications from "./common/hooks/useDebouncedNotifications";
 
 const withOnlineStatus = WrappedComponent =>
   class WithOnlineStatus extends React.Component {
@@ -32,22 +26,17 @@ const withOnlineStatus = WrappedComponent =>
     }
   };
 
-class App extends React.Component {
-  componentDidUpdate({ isOnline }) {
-    NotificationManager.info(isOnline ? 'Online' : 'Offline');
-  }
+const App = ({ isOnline }) => {
+  useDebouncedNotifications(isOnline, 1000);
 
-  render() {
-    const { isOnline } = this.props;
-    return (
-      <>
-        <div className={isOnline ? 'online' : 'offline'}>
-          {isOnline ? 'Online' : 'Offline'}
-          <NotificationContainer />
-        </div>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <div className={isOnline ? 'online' : 'offline'}>
+        {isOnline ? 'Online' : 'Offline'}
+        <NotificationContainer/>
+      </div>
+    </>
+  );
+};
 
 export default withOnlineStatus(App);
